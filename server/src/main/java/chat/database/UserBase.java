@@ -8,6 +8,9 @@ import java.util.List;
 public class UserBase {
     private static List<User> usersBase;
 
+    private UserBase() {
+    }
+
     public static synchronized List<User> getInstance() {
         if (usersBase == null) {
             usersBase = new ArrayList<>();

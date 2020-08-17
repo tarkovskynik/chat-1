@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class InitializationProperties {
-    private static final Logger LOGGER = Logger.getLogger(UsersRepository.class);
+    private static final Logger LOGGER = Logger.getLogger(InitializationProperties.class);
     private static final String WAY_PROPERTIES = "server/src/main/resources/database.properties";
     private Properties properties = new Properties();
 
