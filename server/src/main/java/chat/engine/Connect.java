@@ -10,11 +10,14 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
+import static chat.store.AppConsts.EXIT;
+import static chat.store.AppConsts.PM;
+
 public class Connect implements Runnable {
 
-    private static final String EXIT = "exit";
-
     private static final Logger LOGGER = Logger.getLogger(Connect.class);
+
+    private static final String ANSI_RED = "\u001B[31m";
 
     private String name = "";
 
@@ -63,7 +66,11 @@ public class Connect implements Runnable {
             try {
                 String message = reader.readLine();
 
-                sendMessage(message);
+                if (message.contains(PM)) {
+                    privateMessage(message, name);
+                } else {
+                    sendMessage(message, name);
+                }
 
                 if (disconnectFromServer(message)) {
                     break;
@@ -108,13 +115,25 @@ public class Connect implements Runnable {
         reader.close();
         writer.close();
         clientsOnline.remove(name);
-
     }
 
-    private void sendMessage(String message) throws IOException {
+    private void sendMessage(String message, String name) throws IOException {
+
         for (Map.Entry<String, Socket> entry : clientsOnline.entrySet()) {
-            writer = getWriter(entry.getValue());
-            writer.println(message);
+            if (entry.getValue() != socket) {
+                writer = getWriter(entry.getValue());
+                writer.println(name + ": " + message);
+            }
+        }
+    }
+
+    private void privateMessage(String message, String name) throws IOException {
+        for (Map.Entry<String, Socket> entry : clientsOnline.entrySet()) {
+            if (message.contains(entry.getKey())) {
+                writer = getWriter(entry.getValue());
+                writer.println(ANSI_RED + name + ": " + message + ANSI_RED);
+            }
         }
     }
 }
+
